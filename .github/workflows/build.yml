@@ -46,13 +46,22 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE/src"
           chmod +x gradlew
-          ./gradlew :DiretteItaliaProvider:assembleDebug
+          ./gradlew :DiretteItaliaProvider:make
 
       - name: Push builds
         run: |
           cd "$GITHUB_WORKSPACE/src"
-          cp DiretteItaliaProvider/build/outputs/**/*.cs3 "$GITHUB_WORKSPACE/builds/" 2>/dev/null || true
-          cp DiretteItaliaProvider/build/libs/*.jar "$GITHUB_WORKSPACE/builds/" 2>/dev/null || true
+          mkdir -p "$GITHUB_WORKSPACE/builds"
+
+          FILE=$(find DiretteItaliaProvider/build -type f -name "*.cs3" -print -quit)
+
+          if [ -z "$FILE" ]; then
+            echo "ERRORE: nessun file .cs3 generato"
+            exit 1
+          fi
+
+          cp "$FILE" "$GITHUB_WORKSPACE/builds/"
+
           cd "$GITHUB_WORKSPACE/builds"
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
