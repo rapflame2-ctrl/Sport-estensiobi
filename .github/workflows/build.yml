@@ -54,6 +54,7 @@ jobs:
           find . -type f -name "plugins.json" \
             -not -path "./.gradle/*" -print
 
+    
       - name: Publish builds
         run: |
           SRC="$GITHUB_WORKSPACE/src"
@@ -76,11 +77,13 @@ jobs:
           fi
 
           cp "$FILE" "$OUT/"
+
           JAR=$(find "$SRC/DiretteItaliaProvider/build" -type f -name "*.jar" -print -quit)
 
-if [ -n "$JAR" ]; then
-  cp "$JAR" "$OUT/DiretteItaliaProvider.jar"
-fi
+          if [ -n "$JAR" ]; then
+            cp "$JAR" "$OUT/DiretteItaliaProvider.jar"
+          fi
+
           cp "$PLUGINS" "$OUT/plugins.json"
           cp "$SRC/repo.json" "$OUT/repo.json"
 
@@ -95,4 +98,3 @@ fi
           }
 
           git push origin builds
-
