@@ -1,8 +1,9 @@
 {
   "name": "DiretteItalia",
-  "description": "Repository personale per l'estensione DiretteItalia",
+  "description": "Repository personale DiretteItalia",
   "manifestVersion": 1,
   "pluginLists": [
     "https://raw.githubusercontent.com/rapflame2-ctrl/Sport-estensiobi/builds/plugins.json"
   ]
 }
+
