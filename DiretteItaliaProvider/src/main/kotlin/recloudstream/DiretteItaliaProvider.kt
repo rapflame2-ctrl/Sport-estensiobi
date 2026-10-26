@@ -2,7 +2,7 @@ package recloudstream
 
 import com.lagradost.cloudstream3.*
 import org.json.JSONObject
-import com.lagradost.cloudstream3.utils.newLiveSearchResponse
+
 class DiretteItaliaProvider : MainAPI() {
     override var mainUrl = "https://mercato.direttecommunity.online"
     override var name = "DiretteItalia"
