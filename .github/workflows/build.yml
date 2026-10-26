@@ -1,3 +1,4 @@
+
 name: Build
 
 concurrency:
@@ -16,8 +17,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
         with:
           path: src
@@ -28,11 +32,6 @@ jobs:
           ref: builds
           path: builds
 
-      - name: Clean old builds
-        run: |
-          rm -f "$GITHUB_WORKSPACE"/builds/*.cs3
-          rm -f "$GITHUB_WORKSPACE"/builds/*.jar
-
       - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
@@ -42,30 +41,53 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Build Plugins
+      - name: Build plugin and catalog
         run: |
           cd "$GITHUB_WORKSPACE/src"
           chmod +x gradlew
           ./gradlew :DiretteItaliaProvider:make makePluginsJson
+
+          echo "File CS3 generati:"
           find DiretteItaliaProvider/build -type f -name "*.cs3" -print
 
-      - name: Push builds
-        run: |
-          cd "$GITHUB_WORKSPACE/src"
-          mkdir -p "$GITHUB_WORKSPACE/builds"
+          echo "Cataloghi generati:"
+          find . -type f -name "plugins.json" \
+            -not -path "./.gradle/*" -print
 
-          FILE=$(find DiretteItaliaProvider/build -type f -name "*.cs3" -print -quit)
+      - name: Publish builds
+        run: |
+          SRC="$GITHUB_WORKSPACE/src"
+          OUT="$GITHUB_WORKSPACE/builds"
+
+          FILE=$(find "$SRC/DiretteItaliaProvider/build" \
+            -type f -name "*.cs3" -print -quit)
 
           if [ -z "$FILE" ]; then
             echo "ERRORE: nessun file .cs3 generato"
             exit 1
           fi
 
-          cp "$FILE" "$GITHUB_WORKSPACE/builds/"
+          PLUGINS=$(find "$SRC" -type f -name "plugins.json" \
+            -not -path "*/.gradle/*" -print -quit)
 
-          cd "$GITHUB_WORKSPACE/builds"
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add .
-          git commit -m "Build $GITHUB_SHA" || exit 0
-          git push
+          if [ -z "$PLUGINS" ]; then
+            echo "ERRORE: plugins.json non generato"
+            exit 1
+          fi
+
+          cp "$FILE" "$OUT/"
+          cp "$PLUGINS" "$OUT/plugins.json"
+          cp "$SRC/repo.json" "$OUT/repo.json"
+
+          cd "$OUT"
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add -f "*.cs3" plugins.json repo.json
+
+          git commit -m "Publish DiretteItalia build" || {
+            echo "Nessuna modifica da pubblicare"
+            exit 0
+          }
+
+          git push origin builds
+
