@@ -1,6 +1,5 @@
 [
     {
-        "jarFileSize": 13976,
         "fileHash": "sha256-493b918b01a58730787b11ba98cb110b85b90a9d872f1b332587153e24d46795",
         "apiVersion": 1,
         "repositoryUrl": "https://github.com/rapflame2-ctrl/Sport-estensiobi",
@@ -14,10 +13,8 @@
         ],
         "version": 1,
         "internalName": "DiretteItaliaProvider",
-        "jarUrl": "https://raw.githubusercontent.com/rapflame2-ctrl/Sport-estensiobi/builds/DiretteItaliaProvider.jar",
         "description": "Eventi sportivi in diretta da fonti autorizzate",
         "url": "https://raw.githubusercontent.com/rapflame2-ctrl/Sport-estensiobi/builds/DiretteItaliaProvider.cs3",
         "name": "DiretteItaliaProvider",
-        "jarHash": "sha256-794bc5c97fc85a1bd250cd5948312035946d54a5bda2bf22e1414c070e787a4a"
     }
 ]
