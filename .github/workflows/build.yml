@@ -1,58 +1,68 @@
+
 name: Build
 
 on:
-workflow_dispatch:
-push:
-branches:
-- master
-- main
-paths-ignore:
-- ‘*.md’
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+    paths-ignore:
+      - "*.md"
 
 jobs:
-build:
-runs-on: ubuntu-latest
-permissions:
-contents: write
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
-steps:
-  - name: Checkout source
-    uses: actions/checkout@v4
-    with:
-      path: src
-  - name: Checkout builds
-    uses: actions/checkout@v4
-    with:
-      ref: builds
-      path: builds
-  - name: Setup JDK 17
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: '17'
-  - name: Setup Android SDK
-    uses: android-actions/setup-android@v4
-  - name: Build plugin and catalog
-    run: |
-      cd "$GITHUB_WORKSPACE/src"
-      chmod +x gradlew
-      ./gradlew :DiretteItaliaProvider:make makePluginsJson
-  - name: Publish builds
-    run: |
-      SRC="$GITHUB_WORKSPACE/src"
-      OUT="$GITHUB_WORKSPACE/builds"
-      FILE=$(find "$SRC/DiretteItaliaProvider/build" -type f -name "*.cs3" -print -quit)
-      PLUGINS=$(find "$SRC" -type f -name "plugins.json" -not -path "*/.gradle/*" -print -quit)
-      if [ -z "$FILE" ] || [ -z "$PLUGINS" ]; then
-        echo "Errore: manca il file CS3 o plugins.json"
-        exit 1
-      fi
-      cp "$FILE" "$OUT/"
-      cp "$PLUGINS" "$OUT/plugins.json"
-      cp "$SRC/repo.json" "$OUT/repo.json"
-      cd "$OUT"
-      git config user.email "actions@github.com"
-      git config user.name "GitHub Actions"
-      git add -f "*.cs3" plugins.json repo.json
-      git commit -m "Publish DiretteItalia build" || exit 0
-      git push origin builds
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      - name: Checkout builds
+        uses: actions/checkout@v4
+        with:
+          ref: builds
+          path: builds
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Build plugin and catalog
+        run: |
+          cd "$GITHUB_WORKSPACE/src"
+          chmod +x gradlew
+          ./gradlew :DiretteItaliaProvider:make makePluginsJson
+
+      - name: Publish builds
+        run: |
+          SRC="$GITHUB_WORKSPACE/src"
+          OUT="$GITHUB_WORKSPACE/builds"
+
+          FILE=$(find "$SRC/DiretteItaliaProvider/build" -type f -name "*.cs3" -print -quit)
+          PLUGINS=$(find "$SRC" -type f -name "plugins.json" -not -path "*/.gradle/*" -print -quit)
+
+          if [ -z "$FILE" ] || [ -z "$PLUGINS" ]; then
+            echo "Errore: manca il file CS3 o plugins.json"
+            exit 1
+          fi
+
+          cp "$FILE" "$OUT/"
+          cp "$PLUGINS" "$OUT/plugins.json"
+          cp "$SRC/repo.json" "$OUT/repo.json"
+
+          cd "$OUT"
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add -f "*.cs3" plugins.json repo.json
+          git commit -m "Publish DiretteItalia build" || exit 0
+          git push origin builds
