@@ -46,7 +46,8 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE/src"
           chmod +x gradlew
-          ./gradlew :DiretteItaliaProvider:make
+          ./gradlew :DiretteItaliaProvider:make makePluginsJson
+          find DiretteItaliaProvider/build -type f -name "*.cs3" -print
 
       - name: Push builds
         run: |
