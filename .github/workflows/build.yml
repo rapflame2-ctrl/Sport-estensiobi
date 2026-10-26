@@ -78,11 +78,7 @@ jobs:
 
           cp "$FILE" "$OUT/"
 
-          JAR=$(find "$SRC/DiretteItaliaProvider/build" -type f -name "*.jar" -print -quit)
-
-          if [ -n "$JAR" ]; then
-            cp "$JAR" "$OUT/DiretteItaliaProvider.jar"
-          fi
+          
 
           cp "$PLUGINS" "$OUT/plugins.json"
        
