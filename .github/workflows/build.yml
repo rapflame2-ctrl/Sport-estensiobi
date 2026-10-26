@@ -81,7 +81,23 @@ jobs:
           
 
           cp "$PLUGINS" "$OUT/plugins.json"
-       
+       python3 - <<'PY'
+import json
+
+path = "plugins.json"
+
+with open(path, "r", encoding="utf-8") as f:
+    plugins = json.load(f)
+
+for plugin in plugins:
+    plugin.pop("jarUrl", None)
+    plugin.pop("jarHash", None)
+    plugin.pop("jarFileSize", None)
+
+with open(path, "w", encoding="utf-8") as f:
+    json.dump(plugins, f, indent=4)
+    f.write("\n")
+PY
           cp "$SRC/repo.json" "$OUT/repo.json"
 
           cd "$OUT"
