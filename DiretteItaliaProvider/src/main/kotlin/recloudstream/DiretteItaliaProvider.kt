@@ -2,7 +2,7 @@ package recloudstream
 
 import com.lagradost.cloudstream3.*
 import org.json.JSONObject
-
+import com.lagradost.cloudstream3.utils.newLiveSearchResponse
 class DiretteItaliaProvider : MainAPI() {
     override var mainUrl = "https://mercato.direttecommunity.online"
     override var name = "DiretteItalia"
@@ -22,12 +22,10 @@ class DiretteItaliaProvider : MainAPI() {
             val event = events.optJSONObject(i) ?: return@mapNotNull null
             val title = event.optString("title").takeIf { it.isNotBlank() }
                 ?: return@mapNotNull null
-            LiveSearchResponse(
+            newLiveSearchResponse(
     title,
     "$mainUrl/",
-    this.name,
-    TvType.Live,
-    "$mainUrl/"
+    TvType.Live
 )
         }
 
