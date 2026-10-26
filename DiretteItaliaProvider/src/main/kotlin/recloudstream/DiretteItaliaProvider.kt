@@ -1,7 +1,6 @@
 package recloudstream
 
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.newLiveSearchResponse
 import org.json.JSONObject
 
 class DiretteItaliaProvider : MainAPI() {
@@ -23,11 +22,13 @@ class DiretteItaliaProvider : MainAPI() {
             val event = events.optJSONObject(i) ?: return@mapNotNull null
             val title = event.optString("title").takeIf { it.isNotBlank() }
                 ?: return@mapNotNull null
-            newLiveSearchResponse(
-                title,
-                "$mainUrl/",
-                TvType.Live
-            )
+            LiveSearchResponse(
+    title,
+    "$mainUrl/",
+    this.name,
+    TvType.Live,
+    "$mainUrl/"
+)
         }
 
         return newHomePageResponse(
