@@ -85,6 +85,7 @@ jobs:
           fi
 
           cp "$PLUGINS" "$OUT/plugins.json"
+          sed -i '/"jarUrl":/d; /"jarHash":/d; /"jarFileSize":/d' "$OUT/plugins.json"
           cp "$SRC/repo.json" "$OUT/repo.json"
 
           cd "$OUT"
